@@ -1,0 +1,13 @@
+AllTasksWithAllTeam(TeamId, ContestId, Letter) :-
+    Problems(ContestId, Letter, _),
+    Sessions(SessionId, TeamId, ContestId, _).
+AllSolved(TeamId, ContestId, Letter) :-
+    Runs(_, SessionId, Letter, _, 1),
+    Sessions(_, TeamId, ContestId, _),
+    Problems(ContestId, Letter, _).
+NotSolved(ContestId, Letter) :-
+    AllTasksWithAllTeam(TeamId, ContestId, Letter),
+    not AllSolved(TeamId, ContestId, Letter).
+Result(ProblemName) :-
+    Problems(ContestId, Letter, ProblemName),
+    not NotSolved(ContestId, Letter).

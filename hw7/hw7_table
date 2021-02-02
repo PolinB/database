@@ -1,0 +1,124 @@
+1.1
+delete from
+    Students 
+where
+    StudentId not in (
+        select S.StudentId
+        from
+            (Students S
+            natural join Plan P)
+            left join Marks M
+                on S.StudentId = M.StudentId
+                and P.CourseId = M.CourseId
+        where
+            Mark is null or Mark < 60
+    );
+
+1.2
+delete from
+    Students 
+where
+    StudentId in (
+        select S.StudentId
+        from
+            Students S
+            natural join Plan P
+            left join Marks M
+                on S.StudentId = M.StudentId
+                and P.CourseId = M.CourseId
+        where
+            Mark is null or Mark < 60
+        group by S.StudentId
+        having count(P.CourseId) >= 3
+    );
+    
+1.3
+delete from
+    Groups
+where
+    GroupId not in (
+        select GroupId
+        from Students
+    );
+    
+2.1
+create view Losers as 
+select 
+    S.StudentId, count(P.CourseId) as Debts
+from
+    Students S
+    natural join Plan P
+    left join Marks M
+        on S.StudentId = M.StudentId
+        and P.CourseId = M.CourseId
+where
+    Mark is null or Mark < 60
+group by S.StudentId;
+
+2.2
+create table LosersT as
+select 
+    S.StudentId, count(P.CourseId) as Debts
+from
+    Students S
+    natural join Plan P
+    left join Marks M
+        on S.StudentId = M.StudentId
+        and P.CourseId = M.CourseId
+where
+    Mark is null or Mark < 60
+group by S.StudentId;
+
+create or replace function process_marks() returns trigger as $LoserTrigger$
+    begin
+        delete from LosersT;
+        insert into LosersT (
+            select 
+                S.StudentId, count(P.CourseId) as Debts
+            from
+                Students S
+                natural join Plan P
+                left join Marks M
+                    on S.StudentId = M.StudentId
+                    and P.CourseId = M.CourseId
+            where
+                Mark is null or Mark < 60
+            group by S.StudentId
+        );
+        return new;
+    end;
+$LoserTrigger$ LANGUAGE plpgsql;
+
+create trigger LoserTrigger
+after insert or update or delete
+on Marks
+for each statement execute procedure process_marks();
+
+2.3
+drop trigger if exists LoserTrigger on Marks;
+
+2.4
+
+
+3.1
+Такая проверка не нужна, так как изучаемость предметов зависит от плана, который завязан на GroupId, поэтому все студенты одной группы будут изучать одни и те же предметы. 
+
+3.2
+create or replace function checkMark() returns trigger as $MarkTrigger$
+begin
+    if new.Mark is null
+    then return old;
+    elsif old.Mark is null
+    then return new;
+    elsif new.Mark < old.Mark
+    then return old;
+    else return new;
+    end if;
+end;
+$MarkTrigger$ LANGUAGE plpgsql;
+
+create trigger MarkTrigger
+before update
+on Marks
+for each row execute procedure checkMark();
+

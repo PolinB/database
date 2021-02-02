@@ -1,0 +1,11 @@
+delete from Sessions
+where 
+    SessionId in (
+        select SessionId
+        from
+            Sessions
+            natural join Runs
+            natural join Teams
+        where
+            TeamName = :TeamName
+    );

@@ -1,0 +1,108 @@
+Part1
+
+StudentId -> StudentName, GroupId
+GroupId -> GroupName
+GroupName -> GroupId
+CourseId -> CourseName
+LecturerId -> LecturerName
+CourseId, StudentId -> Mark
+GroupId, CourseId -> LecturerId
+
+Part2
+
+2.1
+Я отталкивалась от того, что ключ - минимальное по включению множество, чье замыкание содерержит все элементы. StudentId нельзя вывести ни из чего, кроме StudentId => Он должен присутствывать в ключе. Далее я посмотрела на замыкание StudentId+ = {StudentId, StudentName, GroupId, GroupName}. В данное множество не входит CourseId, причем его, как и StudentId ни из чего не вывести. Попробуем добавить его {StudentId, CourseId}+ = множество всех атрибутов => является ключем. Другие варианты не будут минимальными по включению, т.к. StudentId, CourseId должны присутствовать, ибо они не находятся ни в одной правой части функциональных зависимостей.
+2.2
+{StudentId, CourseId}
+
+Part3
+
+3.a
+{GroupId, CourseId}
+{GroupId, CourseId, GroupName, CourseName, LectureId}
+{GroupId, CourseId, GroupName, CourseName, LectureId, LectureName}
+
+3.b
+{StudentId, CourseId}
+{StudentId, CourseId, StudentName, GroupId, CourseName, Mark}
+{StudentId, CourseId, StudentName, GroupId, CourseName, Mark, GroupName, LectureId}
+{StudentId, CourseId, StudentName, GroupId, CourseName, Mark, GroupName, LectureId, LectureName}
+
+3.c
+{StudentId, LecturerId}
+{StudentId, LecturerId, StudentName, GroupId, LectureName}
+{StudentId, LecturerId, StudentName, GroupId, LectureName, GroupName}
+
+Part4
+
+4.1d
+По правилу расщепления делаем все правые части единичными. Такое правило у меня только 1: StudentId -> StudentName, GroupId => Заменим его на два: StudentId -> StudentName, StudentId -> GroupId
+
+4.1r
+StudentId -> StudentName
+StudentId -> GroupId
+GroupId -> GroupName
+GroupName -> GroupId
+CourseId -> CourseName
+LecturerId -> LecturerName
+CourseId, StudentId -> Mark
+GroupId, CourseId -> LecturerId
+
+4.2d
+Для левой части каждого правила пытаемся удалить по одному атрибуту. Для правил, в левой части которых и так по 1му атрибуту, это делать не имеет смысла. Тогда остается рассмотреть 2 правила: CourseId, StudentId -> Mark и GroupId, CourseId -> LecturerId.
+Чтобы понять, можно ли удалить некоторые атрибуты посчитаем замыкания для A u {X} -> B, а именно:
+1.Для правила CourseId, StudentId -> Mark:
+1.1 {CourseId, StudentId} \ {StudentId} = CourseId
+CourseId+ = {CourseId, CourseName}, Mark не входит в это замыкание => убрать StudentId нельзя из л.ч. этого правила
+1.2 {CourseId, StudentId} \ {CourseId} = StudentId
+StudentId+ = {StudentId, StudentName, GroupId, GroupName}, Mark не входит в это множество => убрать CourseId нельзя из л.ч. этого правила
+2. Для правила GroupId, CourseId -> LecturerId
+2.1 {GroupId, CourseId} \ {GroupId} = CourseId
+CourseId+ = {CourseId, CourseName}, LectureId не входит в это замыкание => убрать GroupId нельзя из л.ч. этого правила
+2.2 {GroupId, CourseId} \ {CourseId} = GroupId
+GroupId+ = {GroupId, GroupName}, LectureId не входит в полученное множество => убрать StudentId нельзя из л.ч. этого правила
+
+4.2r
+StudentId -> StudentName
+StudentId -> GroupId
+GroupId -> GroupName
+GroupName -> GroupId
+CourseId -> CourseName
+LecturerId -> LecturerName
+CourseId, StudentId -> Mark
+GroupId, CourseId -> LecturerId
+
+4.3d
+Пытаемся удалить по одному правилу. Удаляем правило A -> B только в случае, если B принадлежит замыканию А по функциональным зависимостям, за исключением этого правила, обозначим это как A++.
+1. StudentId -> StudentName
+StudentId++ = {StudentId, GroupId, GroupName} => нельзя удалить
+2. StudentId -> GroupId
+StudentId++ = {StudentId, StudentName} => нельзя удалить
+3. GroupId -> GroupName
+GroupId++ = {GroupId} => нельзя удалить
+4. GroupName -> GroupId
+GroupName++ = {GroupName} => нельзя удалить
+5. CourseId -> CourseName
+CourseId++ = {CourseId} => нельзя удалить
+6. LecturerId -> LecturerName
+LecturerId++ = {LecturerId} => нельзя удалить
+7. CourseId, StudentId -> Mark
+{CourseId, StudentId}++ = {CourseId, StudentId, CourseName, StudentName, GroupId, GroupName, LecturerId, LecturerName} => т.к. Mark не принадлежит этому множеству, то нельзя удалить
+8. GroupId, CourseId -> LecturerId
+{GroupId, CourseId}++ = {GroupId, CourseId, GroupName, CourseName} => т.к. LectureId не принадлежит этому множеству, то нельзя удалить
+
+4.3r
+
+StudentId -> StudentName
+StudentId -> GroupId
+GroupId -> GroupName
+GroupName -> GroupId
+CourseId -> CourseName
+LecturerId -> LecturerName
+CourseId, StudentId -> Mark
+GroupId, CourseId -> LecturerId
+
+
+
+
+

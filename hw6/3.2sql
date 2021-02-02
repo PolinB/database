@@ -1,0 +1,21 @@
+select
+    StudentName, CourseName
+from
+    Students S,
+    Courses C, (
+        select
+            StudentId, CourseId
+        from
+            Students S,
+            Plan P
+        where
+            S.GroupId = P.GroupId
+        union
+        select
+            StudentId, CourseId
+        from
+            Marks
+    ) StudentsWithCourse
+where
+    S.StudentId = StudentsWithCourse.StudentId
+    and C.CourseId = StudentsWithCourse.CourseId;

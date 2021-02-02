@@ -1,0 +1,8 @@
+StudentsWithMarksByCourse(StudentId) :-
+    Students(StudentId, _, _),
+    Courses(CourseId, :CourseName),
+    Marks(StudentId, CourseId, _).
+StudentsWithoutMarkByCourseInfo(StudentId, StudentName, GroupName) :-
+    Students(StudentId, StudentName, GroupId),
+    Groups(GroupId, GroupName),
+    not StudentsWithMarksByCourse(StudentId).

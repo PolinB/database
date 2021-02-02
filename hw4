@@ -1,0 +1,89 @@
+1.1
+
+Для начала определим функциональные зависимости от которых будем отталкиваться при выполнении задания далее:
+StudentId -> StudentName, GroupId
+GroupId -> GroupName
+GroupName -> GroupId
+CourseId -> CourseName
+LecturerId -> LecturerName
+CourseId, StudentId -> Mark
+GroupId, CourseId -> LecturerId
+Дано отношение: (StudentId, StudentName, GroupId, GroupName, CourseId, CourseName, LecturerId, LecturerName, Mark)
+Проверим, что оно находится в 1НФ:
+1) В отношении нет повторяющихся групп (исходно)
+2) Все атрибуты атомарны (исходно)
+3) Ключ у изначельного отношения (StudentId, CourseId) - был определен в дз №3
+Т.е. менять ничего не надо.
+
+1.2
+
+(StudentId, StudentName, GroupId, GroupName, CourseId, CourseName, LecturerId, LecturerName, Mark) => (StudentId, StudentName, GroupId, GroupName, CourseId, CourseName, LecturerId, LecturerName, Mark);
+
+2.1
+
+Обозначения: A* - часть ключа, (!->)  - нет такой ФЗ, мб не на прямую, а транзитивно.
+Для того, чтобы отношение находилось в 2НФ необходимо, чтобы оно находилось в 1НФ, а также неключевые атрибуты функционально зависят от ключа в целом.
+Исходя только из простого разбиения (A*, B*, C, E), где A -> C, B !-> C, A !-> E, B !-> E => (A*, C); (A*, B*, E); Получим (StudentId*, StudentName, GroupId, GroupName, CourseId*, CourseName, LecturerId, LecturerName, Mark) => (StudentId*, StudentName, GroupId, GroupName); (CourseId*, CourseName); (StudentId*, CourseId*, LecturerId, LecturerName, Mark); Однако, данный вариант теряет ФЗ GroupId, CourseId -> LecturerId и два студента из одной группы могут обучаться у разных преподавателей. Поэтому попробуем учесть эту ФЗ в отдельном отношении (GroupId*, CourseId*, LecturerId, LecturerName). Остальное оставим также, как разбивали ранее. Получим: (StudentId*, StudentName, GroupId, GroupName, CourseId*, CourseName, LecturerId, LecturerName, Mark) => (StudentId*, StudentName, GroupId, GroupName); (CourseId*, CourseName); (StudentId*, CourseId*, Mark); (GroupId*, CourseId*, LecturerId, LecturerName), и для данного списка отношений выполняются все условия 2НФ, описанные выше.
+
+2.2
+
+(StudentId, StudentName, GroupId, GroupName, CourseId, CourseName, LecturerId, LecturerName, Mark) => (StudentId, StudentName, GroupId, GroupName); (CourseId, CourseName); (StudentId, CourseId, Mark); (GroupId, CourseId, LecturerId, LecturerName);
+
+3.1
+
+Для того, чтобы отношение находилось в 3НФ необходимо, чтобы оно было в 2НФ, а также неключевые атрибуты непосредственно (не транзитивно) зависили бы от ключей.
+Посмотрим на наши функциональные зависимости, описанные в 1.1. Найдем там такие транзитивные отношения как:
+1) StudentId -> GroupId
+   GroupId -> GroupName
+2) GroupId, CourseId -> LecturerId
+   LecturerId -> LecturerName
+Произведем необходимые декомпозиции, а остальное оставим также:
+1) (StudentId, StudentName, GroupId, GroupName) => (StudentId, StudentName, GroupId); (GroupId, GroupName);
+2) (GroupId, CourseId, LecturerId, LecturerName) => (GroupId, CourseId, LecturerId); (LecturerId, LecturerName);
+
+3.2
+
+(StudentId, StudentName, GroupId, GroupName) => (StudentId, StudentName, GroupId); (GroupId, GroupName);
+(CourseId, CourseName) => (CourseId, CourseName);
+(StudentId, CourseId, Mark) => (StudentId, CourseId, Mark);
+(GroupId, CourseId, LecturerId, LecturerName) => (GroupId, CourseId, LecturerId); (LecturerId, LecturerName);
+
+3B.1
+
+Для того, чтобы отошение было в НФБК в каждой нетривиальной функциональной зависимости X -> Y, X должен являться надключом. Это правило выполняется для всех отношений из 3.2, поэтому оставим неизменным и не будем декомпозировать по «неправильным» ФЗ, так как их нет.
+
+3B.2
+
+(StudentId, StudentName, GroupId) => (StudentId, StudentName, GroupId);
+(GroupId, GroupName) => (GroupId, GroupName);
+(CourseId, CourseName) => (CourseId, CourseName);
+(StudentId, CourseId, Mark) => (StudentId, CourseId, Mark);
+(GroupId, CourseId, LecturerId) => GroupId, CourseId, LecturerId);
+(LecturerId, LecturerName) => (LecturerId, LecturerName);
+
+4.1
+
+Отношения находятся в 4НФ, если для каждой нетривиальной МЗ X ->> Y|Z и атрибута A: X -> A, для каждой нетривиальной МЗ X ->> Y|Z и X– надключ, каждая нетривиальная МЗ является ФЗ и отношение находится в НФБК. Теперь посмотрим на наши отношения и поймем, что не нуждаемся в декомпозиции: либо из 2х атрибутов и не декартовое произведение ((GroupId, GroupName), CourseId, CourseName)), либо все МЗ зависимости если и есть, то они являются ФЗ и уже находятся в НФБК.
+
+4.2
+
+(StudentId, StudentName, GroupId) => (StudentId, StudentName, GroupId);
+(GroupId, GroupName) => (GroupId, GroupName);
+(CourseId, CourseName) => (CourseId, CourseName);
+(StudentId, CourseId, Mark) => (StudentId, CourseId, Mark);
+(GroupId, CourseId, LecturerId) => (GroupId, CourseId, LecturerId);
+(LecturerId, LecturerName) => (LecturerId, LecturerName);
+
+5.1
+
+Необходимо, чтобы для каждой нетривиальной ЗС ∗{X1,X2,...,Xn}, все Xi – надключ.
+Я не нашла разумных ЗС, кроме тех, что явлчются МЗ, поэтому отношения уже в 5НФ.
+
+5.2
+
+(StudentId, StudentName, GroupId) => (StudentId, StudentName, GroupId);
+(GroupId, GroupName) => (GroupId, GroupName);
+(CourseId, CourseName) => (CourseId, CourseName);
+(StudentId, CourseId, Mark) => (StudentId, CourseId, Mark);
+(GroupId, CourseId, LecturerId) => (GroupId, CourseId, LecturerId);
+(LecturerId, LecturerName) => (LecturerId, LecturerName);

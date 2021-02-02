@@ -1,0 +1,19 @@
+select
+    StudentId, StudentName, GroupName
+from
+    Students S,
+    Groups G
+where
+    S.GroupId = G.GroupId
+    and S.StudentId not in (
+        select
+            S.StudentId
+        from
+            Students S,
+            Marks M,
+            Courses C
+        where
+            CourseName = :CourseName
+            and S.StudentId = M.StudentId
+            and C.CourseId = M.courseId
+    );

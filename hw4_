@@ -1,0 +1,23 @@
+1.2
+
+(StudentId, StudentName, GroupId, GroupName, CourseId, CourseName, LecturerId, LecturerName, Mark) => (StudentId, StudentName, GroupId, GroupName, CourseId, CourseName, LecturerId, LecturerName, Mark);
+
+2.2
+
+(StudentId, StudentName, GroupId, GroupName, CourseId, CourseName, LecturerId, LecturerName, Mark) => (StudentId, StudentName, GroupId, GroupName); (CourseId, CourseName); (StudentId, CourseId, LecturerId, LecturerName, Mark);
+
+3.2
+
+(StudentId, StudentName, GroupId, GroupName) => (StudentId, StudentName, GroupId); (GroupId, GroupName);
+
+(CourseId, CourseName) => (CourseId, CourseName);
+
+(StudentId, CourseId, LecturerId, LecturerName, Mark) => (StudentId, CourseId, LecturerId, Mark); (LecturerId, LecturerName);
+
+4.2
+
+(StudentId, StudentName, GroupId) => (StudentId, StudentName, GroupId)
+
+(GroupId, GroupName) => (GroupId, GroupName)
+
+(StudentId, CourseId, LecturerId, Mark)

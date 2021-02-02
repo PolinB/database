@@ -1,0 +1,7 @@
+select
+    StudentId, StudentName, S.GroupId
+from
+    Students S,
+    Groups G
+where
+    GroupName = :GroupName and G.GroupId = S.GroupId 

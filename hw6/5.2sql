@@ -1,0 +1,37 @@
+select 
+    GroupName, CourseName
+from
+    Groups G,
+    Courses C
+where
+    not exists (
+        select
+            GroupId, CourseId
+        from (
+            select
+                GroupId, CourseId
+            from
+                Students S,
+                Courses C
+            where
+                not exists (
+                    select 
+                        GroupId, CourseId
+                    from (
+                        select
+                            S.StudentId, CourseId, GroupId
+                        from
+                            Students S,
+                            Marks M
+                        where
+                            S.StudentId = M.StudentId
+                    ) StudentsWithMarksByCourse
+                    where
+                        S.GroupId = StudentsWithMarksByCourse.GroupId 
+                        and C.CourseId = StudentsWithMarksByCourse.CourseId 
+                        and S.StudentId = StudentsWithMarksByCourse.StudentId
+                )
+        ) GroupsNotAll
+        where
+            G.GroupId = GroupsNotAll.GroupId and C.CourseId = GroupsNotAll.CourseId
+    )

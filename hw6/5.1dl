@@ -1,0 +1,11 @@
+StudentsWithMarksByCourse(StudentId, CourseId) :-
+    Students(StudentId, _, _),
+    Marks(StudentId, CourseId, _).
+GroupsNotAll(GroupId, CourseId) :-
+    Students(StudentId, _, GroupId),
+    Courses(CourseId, _),
+    not StudentsWithMarksByCourse(StudentId, CourseId).
+GoodGroupsCourse(GroupId, CourseId) :-
+    Groups(GroupId, _),
+    Courses(CourseId, _),
+    not GroupsNotAll(GroupId, CourseId).
